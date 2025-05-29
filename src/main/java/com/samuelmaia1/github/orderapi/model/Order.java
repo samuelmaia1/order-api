@@ -1,5 +1,6 @@
 package com.samuelmaia1.github.orderapi.model;
 
+import com.samuelmaia1.github.orderapi.dto.RequestOrderDto;
 import com.samuelmaia1.github.orderapi.enums.DeliveryType;
 import com.samuelmaia1.github.orderapi.enums.OrderStatus;
 import jakarta.persistence.*;
@@ -32,6 +33,14 @@ public class Order {
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderItem> products = new ArrayList<>();
+
+    public Order() {}
+
+    public Order(RequestOrderDto dto) {
+        this.deliveryType = dto.getDeliveryType();
+        this.status = dto.getStatus();
+        this.time = LocalDateTime.now();
+    }
 
     public BigDecimal getTotalPrice() {
         return products
