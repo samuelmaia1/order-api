@@ -1,6 +1,7 @@
 package com.samuelmaia1.github.orderapi.model;
 
 import com.samuelmaia1.github.orderapi.dto.RequestOrderItemDto;
+import com.samuelmaia1.github.orderapi.dto.ResponseOrderItemDto;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -84,5 +85,15 @@ public class OrderItem {
 
     public BigDecimal getSubTotal() {
         return unitValue.multiply(BigDecimal.valueOf(quantity));
+    }
+
+    public ResponseOrderItemDto toDto() {
+        return new ResponseOrderItemDto(
+                this.id,
+                this.product.toDto(),
+                this.quantity,
+                this.unitValue,
+                this.observation
+        );
     }
 }

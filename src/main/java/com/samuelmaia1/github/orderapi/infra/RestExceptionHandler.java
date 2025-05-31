@@ -1,5 +1,6 @@
 package com.samuelmaia1.github.orderapi.infra;
 
+import com.samuelmaia1.github.orderapi.exceptions.EntityNotFoundException;
 import com.samuelmaia1.github.orderapi.exceptions.OrderIsEmptyException;
 import com.samuelmaia1.github.orderapi.response.ErrorResponse;
 import org.springframework.http.HttpStatus;
@@ -13,11 +14,20 @@ import java.time.LocalDateTime;
 public class RestExceptionHandler {
 
     @ExceptionHandler(OrderIsEmptyException.class)
-    public ResponseEntity<ErrorResponse> handleOrderIsEmpty() {
-        ErrorResponse error = buildErrorResponse(HttpStatus.BAD_REQUEST, "O pedido deve ter ao menos 1 item.");
+    public ResponseEntity<ErrorResponse> handleOrderIsEmpty(OrderIsEmptyException exception) {
+        ErrorResponse error = buildErrorResponse(HttpStatus.BAD_REQUEST, exception.getMessage());
 
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
+                .body(error);
+    }
+
+    @ExceptionHandler(EntityNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleEntityNotFound(EntityNotFoundException exception) {
+        ErrorResponse error = buildErrorResponse(HttpStatus.NOT_FOUND, exception.getMessage());
+
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
                 .body(error);
     }
 

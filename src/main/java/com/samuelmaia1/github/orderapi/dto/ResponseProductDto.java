@@ -8,6 +8,8 @@ public class ResponseProductDto {
     private String description;
     private BigDecimal price;
 
+    public ResponseProductDto() {}
+
     public ResponseProductDto(String id, String name, String description, BigDecimal price) {
         this.id = id;
         this.name = name;

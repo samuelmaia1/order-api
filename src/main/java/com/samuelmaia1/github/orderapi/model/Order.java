@@ -1,6 +1,7 @@
 package com.samuelmaia1.github.orderapi.model;
 
 import com.samuelmaia1.github.orderapi.dto.RequestOrderDto;
+import com.samuelmaia1.github.orderapi.dto.ResponseOrderDto;
 import com.samuelmaia1.github.orderapi.enums.DeliveryType;
 import com.samuelmaia1.github.orderapi.enums.OrderStatus;
 import jakarta.persistence.*;
@@ -47,5 +48,19 @@ public class Order {
                 .stream()
                 .map(OrderItem::getSubTotal)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
+
+    public ResponseOrderDto toDto() {
+        return new ResponseOrderDto(
+                this.id,
+                this.products
+                        .stream()
+                        .map(OrderItem::toDto)
+                        .toList(),
+                this.time,
+                this.total,
+                this.deliveryType,
+                this.status
+        );
     }
 }

@@ -2,6 +2,7 @@ package com.samuelmaia1.github.orderapi.services;
 
 import com.samuelmaia1.github.orderapi.dto.RequestOrderDto;
 import com.samuelmaia1.github.orderapi.dto.RequestOrderItemDto;
+import com.samuelmaia1.github.orderapi.dto.ResponseOrderDto;
 import com.samuelmaia1.github.orderapi.exceptions.OrderIsEmptyException;
 import com.samuelmaia1.github.orderapi.model.Order;
 import com.samuelmaia1.github.orderapi.model.OrderItem;
@@ -22,7 +23,7 @@ public class OrderService {
     @Autowired
     private ProductRepository productRepository;
 
-    public Order createOrder(RequestOrderDto data) {
+    public ResponseOrderDto createOrder(RequestOrderDto data) {
         if (data.getProducts() == null || data.getProducts().isEmpty())
             throw new OrderIsEmptyException("O pedido deve ter ao menos 1 item.");
 
@@ -42,6 +43,6 @@ public class OrderService {
         order.setProducts(items);
         order.setTotal(order.getTotalPrice());
 
-        return orderRepository.save(order);
+        return orderRepository.save(order).toDto();
     }
 }
