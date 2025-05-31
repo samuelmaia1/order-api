@@ -10,6 +10,10 @@ import com.samuelmaia1.github.orderapi.model.Product;
 import com.samuelmaia1.github.orderapi.repositories.OrderRepository;
 import com.samuelmaia1.github.orderapi.repositories.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -44,5 +48,18 @@ public class OrderService {
         order.setTotal(order.getTotalPrice());
 
         return orderRepository.save(order).toDto();
+    }
+
+    public Page<ResponseOrderDto> getAll(Integer page, Integer size, Boolean orderByTime) {
+        Pageable pageable;
+
+        if (orderByTime)
+            pageable = PageRequest.of(page, size, Sort.by("time").descending());
+        else
+            pageable = PageRequest.of(page, size);
+
+        Page<Order> orders = orderRepository.findAll(pageable);
+
+        return orders.map(Order::toDto);
     }
 }
