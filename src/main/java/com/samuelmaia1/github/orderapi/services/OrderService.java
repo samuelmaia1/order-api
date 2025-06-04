@@ -4,12 +4,12 @@ import com.samuelmaia1.github.orderapi.dto.RequestOrderDto;
 import com.samuelmaia1.github.orderapi.dto.RequestOrderItemDto;
 import com.samuelmaia1.github.orderapi.dto.ResponseOrderDto;
 import com.samuelmaia1.github.orderapi.exceptions.OrderIsEmptyException;
+import com.samuelmaia1.github.orderapi.mappers.OrderMapper;
 import com.samuelmaia1.github.orderapi.model.Order;
 import com.samuelmaia1.github.orderapi.model.OrderItem;
 import com.samuelmaia1.github.orderapi.model.Product;
 import com.samuelmaia1.github.orderapi.repositories.OrderRepository;
 import com.samuelmaia1.github.orderapi.repositories.ProductRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -21,11 +21,17 @@ import java.util.List;
 
 @Service
 public class OrderService {
-    @Autowired
-    private OrderRepository orderRepository;
+    private final OrderRepository orderRepository;
 
-    @Autowired
-    private ProductRepository productRepository;
+    private final ProductRepository productRepository;
+
+    private final OrderMapper orderMapper;
+
+    public OrderService(OrderRepository orderRepository, ProductRepository productRepository, OrderMapper orderMapper) {
+        this.orderRepository = orderRepository;
+        this.productRepository = productRepository;
+        this.orderMapper = orderMapper;
+    }
 
     public ResponseOrderDto createOrder(RequestOrderDto data) {
         if (data.getProducts() == null || data.getProducts().isEmpty())
@@ -47,19 +53,19 @@ public class OrderService {
         order.setProducts(items);
         order.setTotal(order.getTotalPrice());
 
-        return orderRepository.save(order).toDto();
+        return orderMapper.toDto(orderRepository.save(order));
     }
 
     public Page<ResponseOrderDto> getAll(Integer page, Integer size, Boolean orderByTime) {
         Pageable pageable;
 
-        if (orderByTime)
+        if (Boolean.TRUE.equals(orderByTime))
             pageable = PageRequest.of(page, size, Sort.by("time").descending());
         else
             pageable = PageRequest.of(page, size);
 
         Page<Order> orders = orderRepository.findAll(pageable);
 
-        return orders.map(Order::toDto);
+        return orders.map(order -> orderMapper.toDto(order));
     }
 }

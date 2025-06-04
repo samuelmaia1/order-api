@@ -13,8 +13,11 @@ import java.util.List;
 @RestController
 @RequestMapping("/order")
 public class OrderController {
-    @Autowired
-    private OrderService service;
+    private final OrderService service;
+
+    public OrderController(OrderService service) {
+        this.service = service;
+    }
 
     @PostMapping
     public ResponseEntity<ResponseOrderDto> createOrder(@RequestBody RequestOrderDto dto) {
